@@ -2,7 +2,7 @@
 
 Proyecto creado para participar en el evento QuickStarter 2019 organizado por Next Technologies
 
-**Autores:
+**Autores**:
 
 * Antonio Albujar Palacios
 * José Julián Bayón de Castro
