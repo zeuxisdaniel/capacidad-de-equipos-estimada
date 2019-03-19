@@ -10,6 +10,6 @@ COPY --from=nodebuild /build /app/build
 WORKDIR /app
 RUN pip install pipenv
 RUN pipenv install --system --deploy --ignore-pipfile
-RUN pipenv install -r sistema_experto/requirements.txt
+RUN pipenv install -r requirements.txt --skip-lock
 
 CMD ["pipenv", "run", "gunicorn", "-k", "gevent", "-b", "0.0.0.0:8080", "wsgi:app"]
