@@ -15,7 +15,7 @@
           label Hora semanales esperadas
           input(type='number' v-model="project.hours")
         .quick-input
-          label Número de recursos
+          label Número de recursos {{ msg }}
           input(type='number' v-model="project.resc")
         .quick-input
             label Technologías a utilizar
@@ -57,7 +57,7 @@ export default {
   },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      msg: '',
       project: {
         name: '',
         desc: '',
@@ -75,6 +75,8 @@ export default {
   methods:{
     sendCall(){
       console.log(this.project);
+
+      this.$http.post('', this.project ,res => {}, err => {});
       return;
     },
     validate(item){
