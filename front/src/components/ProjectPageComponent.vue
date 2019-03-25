@@ -41,13 +41,16 @@
               template(slot='maxElements')
                 span.multiselect__single
                   | Necesitas borrar un elemento para agregar otro (Presiona "Delete")
+        .quick-input(v-show='bSug')
+          span.blink.sug(@click='suggest()') Te recomendamos mirar proyectos similares al tuyo ...
         .quick-input
-            input.go-input(type='submit' value='Registrar') 
+          input.go-input(type='submit' value='Registrar') 
 </template>
 
 
 <script>
 import Multiselect from 'vue-multiselect'
+import router from '../router'
 
 
 export default {
@@ -58,6 +61,7 @@ export default {
   data () {
     return {
       msg: '',
+      bSug: false,
       project: {
         name: '',
         desc: '',
@@ -66,6 +70,7 @@ export default {
         resc: 0,
         techs: []
       },
+      recPred:[3,4,5,6,7,8],
       value: [],
       limitopts:4,
       from: '',
@@ -73,10 +78,17 @@ export default {
     }
   },
   methods:{
+    suggest(){
+      router.push('list');
+    },
     sendCall(){
       console.log(this.project);
-
-      this.$http.post('', this.project ,res => {}, err => {});
+      
+      this.project.resc = this.recPred[Math.floor(Math.random()*this.recPred.length)];
+      this.msg = `Te sugerimos utilizar ${this.project.resc} recursos.`;
+      this.bSug = true;
+      
+      // this.$http.post('', this.project ,res => {}, err => {});
       return;
     },
     validate(item){
@@ -181,6 +193,13 @@ export default {
 .form-project input[type="number,text"]{
   margin-top: 5px;
 }
+.sug{
+  margin: 10px 10px 5px 10px;
+  text-align: left;
+  cursor: pointer;
+  color: #1464A5;
+  transition: .5s;
+}
 
 .form-project input[type=submit]{
   background: #49A5E6;
@@ -195,6 +214,16 @@ export default {
 .quick-input{
   display: flex;
   flex-direction: column;
+}
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: .5;
+  }
 }
 
 @media screen and (max-width:640px) {
