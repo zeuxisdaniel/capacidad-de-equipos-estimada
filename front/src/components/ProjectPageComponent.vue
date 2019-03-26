@@ -1,5 +1,8 @@
 <template lang="pug">
   .project-component-container
+    .overlay(v-if="loadding")
+      .loader
+        spinner(name="pacman" color="#49A5E6" noFadeIn)
     .project-form-container
       form#project-form.form-project( @submit='sendCall()')
         .quick-input
@@ -15,7 +18,8 @@
           label Hora semanales esperadas
           input(type='number' v-model="project.hours")
         .quick-input
-          label Número de recursos {{ msg }}
+          label(v-bind:class="{ 'rec-num' : bSug }") Número de recursos 
+            span.sug-label {{ msg }}
           input(type='number' v-model="project.resc")
         .quick-input
             label Technologías a utilizar
@@ -41,27 +45,33 @@
               template(slot='maxElements')
                 span.multiselect__single
                   | Necesitas borrar un elemento para agregar otro (Presiona "Delete")
-        .quick-input(v-show='bSug')
-          span.blink.sug(@click='suggest()') Te recomendamos mirar proyectos similares al tuyo ...
         .quick-input
-          input.go-input(type='submit' value='Registrar') 
+          input.go-input(type='submit' value='Estimar recursos') 
+        .quick-input
+          input(type='submit' value='Registrar') 
+        .quick-input(v-show='bSug')
+          span.blink.sug(@click='suggest()') Click aquí -> Te recomendamos mirar proyectos similares al tuyo ...
 </template>
 
 
 <script>
 import Multiselect from 'vue-multiselect'
 import router from '../router'
+import Spinner from 'vue-spinkit'
+
 
 
 export default {
   name: 'Projects',
   components: {
-    Multiselect
+    Multiselect,
+    Spinner
   },
   data () {
     return {
       msg: '',
       bSug: false,
+      loadding: false,
       project: {
         name: '',
         desc: '',
@@ -83,12 +93,26 @@ export default {
     },
     sendCall(){
       console.log(this.project);
-      
-      this.project.resc = this.recPred[Math.floor(Math.random()*this.recPred.length)];
-      this.msg = `Te sugerimos utilizar ${this.project.resc} recursos.`;
       this.bSug = true;
       
-      // this.$http.post('', this.project ,res => {}, err => {});
+      var data = {
+            tecnologia1: "Mongo",
+            tecnologia2: "Polymer",
+            tecnologia3: "Go Lang",
+            tecnologia4: "Networking",
+            timeProject: "10"
+        };
+      this.loadding = true;
+      this.$http.post('http://ec2-18-188-111-82.us-east-2.compute.amazonaws.com/services/obtener-recursos', data 
+      ,res => {
+        console.log(res);
+        this.msg = res;
+      }, err => {
+        console.log(err);
+      }).then(res => {
+        this.msg = res.body.message;
+        this.loadding = false;
+      });
       return;
     },
     validate(item){
@@ -161,6 +185,25 @@ export default {
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style scoped>
+.overlay{
+    width: 100%;
+    min-height: 550px;
+    height: 100%;
+    background: black;
+    position: absolute;
+    opacity: .7;
+    z-index: 99998;
+}
+.loader{
+    position: fixed;
+    display: inline-block;
+    margin-top: 10%;
+    z-index: 999999;
+}
+.rec-num{
+  border: .5px solid;
+  border-color:#48AE64;
+}
 
 .project-form-container{
   display: flex;
@@ -169,6 +212,10 @@ export default {
   color: #424242;
   padding: 20px;
   flex-wrap: wrap;
+}
+
+.sug-label{
+  color: #48AE64;
 }
 
 .form-project{
@@ -214,6 +261,16 @@ export default {
 .quick-input{
   display: flex;
   flex-direction: column;
+}
+.quick-input label{
+  padding:5px;
+}
+
+.go-input{
+  background: #48AE64 !important;
+}
+.go-input:hover{
+  background: #388D4F !important;
 }
 
 .blink {
