@@ -291,6 +291,12 @@ export default {
 }
 @media screen and (max-width:1024px) and (min-width:640px) {
   /* reglas CSS */
+  .project-form-container{
+  }
+
+  .quick-input{
+    flex: 0 0 50%;
+  }
 }
 
 @media screen and (min-width:1024px) {
